@@ -5,7 +5,9 @@
 		<link rel="stylesheet" href="/css/style.css" />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis:300,600|Ubuntu" />
 		<script src="/js/two/vector.js"></script>
-		<script src="/js/two/matrix.js"></script>
+		<script src="/js/direction.js"></script>
+		<script src="/js/color.js"></script>
+		<script src="/js/segment.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	</head>
 	<body>
@@ -26,21 +28,48 @@
 		var canvas = $('#canvas').get(0);
 
 		var ctx = canvas.getContext('2d');
-
+		ctx.globalCompositeOperation = 'destination-over'
 		$(window).resize(function(){
 			canvas.width  = $(canvas).width();
 			canvas.height = $(canvas).height();
 		}).resize();
 
-		var v = new Vector(30, 40);
+		var segments = [
+			new Segment(
+				new Vector(canvas.width/2, canvas.height/2),
+				new Vector(canvas.width/2, canvas.height/2),
+				Math.random(),
+				Direction.n
+			)
+		];
+		var activeSegmentCount = 1;
 		function draw() {
-			ctx.save();
-			ctx.fillStyle = 'red';
-			ctx.beginPath();
-			ctx.arc(v.x, v.y, 10, 0, Math.PI * 2, false);
-			ctx.fill();
-			ctx.restore();
-			v.x++;
+			var newSegments = [];
+			//ctx.clearRect(0, 0, canvas.width, canvas.height);
+			segments.forEach(function(s) {
+				// body...
+					
+				if(s.active) {
+					var r = Math.random()
+					s.update();
+					s.drawTo(ctx);
+					if(s.length() > 50) {
+						if(r < (activeSegmentCount - 1) / 20) {
+							s.active = false;
+							activeSegmentCount--;
+						}
+						else {
+							var forked = s.fork();
+							newSegments.push(forked[0]);
+							newSegments.push(forked[1]);
+							activeSegmentCount++;
+						}
+					}
+				}
+			});
+			newSegments.forEach(function(s) {
+				segments.unshift(s);
+			});
 			requestAnimationFrame(draw);
 		}
 		draw();
