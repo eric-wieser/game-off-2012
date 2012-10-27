@@ -34,45 +34,103 @@
 			canvas.height = $(canvas).height();
 		}).resize();
 
-		var segments = [
-			new Segment(
-				new Vector(canvas.width/2, canvas.height/2),
-				new Vector(canvas.width/2, canvas.height/2),
-				Math.random(),
-				Direction.n
-			)
-		];
-		var activeSegmentCount = 1;
-		function draw() {
-			var newSegments = [];
-			//ctx.clearRect(0, 0, canvas.width, canvas.height);
-			segments.forEach(function(s) {
-				// body...
-					
-				if(s.active) {
-					var r = Math.random()
-					s.update();
-					s.drawTo(ctx);
-					if(s.length() > 50) {
-						if(r < (activeSegmentCount - 1) / 20) {
-							s.active = false;
-							activeSegmentCount--;
-						}
-						else {
-							var forked = s.fork();
-							newSegments.push(forked[0]);
-							newSegments.push(forked[1]);
-							activeSegmentCount++;
+		function using(ctx, f) {
+			ctx.save();
+			f(ctx);
+			ctx.restore();
+		};
+
+		var segments,activeSegmentCount;
+		function start() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			segments = [
+				new Segment(
+					new Vector(canvas.width/2, canvas.height),
+					new Vector(canvas.width/2, canvas.height),
+					Math.random(),
+					Direction.n
+				),
+				new Segment(
+					new Vector(canvas.width/2, 0),
+					new Vector(canvas.width/2, 0),
+					Math.random(),
+					Direction.s
+				)
+			];
+			activeSegmentCount = 1;
+		}
+		var lastt = Date.now();
+		function draw(t) {
+			if(t != undefined) {
+				var dt = (t - lastt) / 1000.0;
+				if(dt > 0.2) dt = 0.2;
+
+				var newSegments = [];
+				if(Math.floor(t / 100) != Math.floor(lastt / 100)) {
+					ctx.globalCompositeOperation = "destination-in";
+					ctx.fillStyle = "rgba(0, 0, 0, 0.99)";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					ctx.globalCompositeOperation = 'destination-over';
+				}
+				segments.forEach(function(s) {
+					// body...
+						
+					if(s.active) {
+						var r = Math.random()
+						s.update(dt);
+						s.drawTo(ctx);
+						if(s.length() > 50) {
+							s.b = s.a.plus(s.dir.times(50))
+							if(r < (activeSegmentCount - 1) / 20) {
+								s.active = false;
+								activeSegmentCount--;
+								using(ctx, function() {
+									ctx.beginPath();
+									ctx.globalCompositeOperation = 'source-over';
+									ctx.fillStyle = "black";
+									ctx.arc(s.b.x, s.b.y, 5, 0, Math.PI * 2, false);
+									ctx.fill();
+								});
+							}
+							else {
+								var forked;
+								var r2 = Math.random() * 3;
+								if(r2 < 1) forked = s.forkLeft();
+								else if(r2 < 2) forked = s.forkRight();
+								else forked = s.forkSymmetric();
+								newSegments.push(forked[0]);
+								newSegments.push(forked[1]);
+								using(ctx, function() {
+									ctx.beginPath();
+									ctx.globalCompositeOperation = 'source-over';
+									ctx.fillStyle = "white";
+									ctx.arc(s.b.x, s.b.y, 5, 0, Math.PI * 2, false);
+									ctx.fill();
+								});
+								activeSegmentCount++;
+							}
 						}
 					}
-				}
-			});
-			newSegments.forEach(function(s) {
-				segments.unshift(s);
-			});
+				});
+				newSegments.forEach(function(s) {
+					segments.unshift(s);
+				});
+				lastt = t;
+			}
 			requestAnimationFrame(draw);
 		}
+		start();
 		draw();
+		$(canvas).click(function(e) {
+			if(e.which == 1) {
+				var offset = $(this).offset();
+				var at = new Vector(e.pageX - offset.left, e.pageY - offset.top);
+				segments.unshift(
+					new Segment(at, at.clone(), Math.random(), Direction.n)
+				);
+			}
+			else if(e.which == 2) start();
+		});
 		</script>
 	</body>
 </html>

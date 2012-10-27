@@ -2,6 +2,7 @@ Direction = function(x, y, name) {
 	Vector.call(this, x, y);
 	this.name = name;
 }
+Direction.prototype = new Vector();
 
 Direction.n  = new Direction( 0, -1, "n");
 Direction.ne = new Direction( 1, -1, "ne");

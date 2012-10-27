@@ -6,15 +6,30 @@ function Segment(a, b, colorid, dir) {
 	this.dir = dir;
 	this.active = true;
 }
-Segment.prototype.fork = function() {
+Segment.prototype.forkSymmetric = function() {
 	this.active = false;
 	return [
 		new Segment(this.b, this.b.clone(), (this.colorid + 0.95) % 1, this.dir.left()),
 		new Segment(this.b, this.b.clone(), (this.colorid + 0.05) % 1, this.dir.right())
 	]
 }
+Segment.prototype.forkLeft = function() {
+	this.active = false;
+	return [
+		new Segment(this.b, this.b.clone(), (this.colorid + 0.95) % 1, this.dir.left()),
+		new Segment(this.b, this.b.clone(), (this.colorid + 0.05) % 1, this.dir)
+	]
+}
+Segment.prototype.forkRight = function() {
+	this.active = false;
+	return [
+		new Segment(this.b, this.b.clone(), (this.colorid + 0.95) % 1, this.dir),
+		new Segment(this.b, this.b.clone(), (this.colorid + 0.05) % 1, this.dir.right())
+	]
+}
 Segment.prototype.length = function() {
-	return this.a.minus(this.b).magnitude();
+	var d = this.a.minus(this.b)
+	return Math.max(Math.abs(d.x), Math.abs(d.y));
 };
 Segment.prototype.drawTo = function(ctx) {
 	ctx.save();
@@ -28,6 +43,6 @@ Segment.prototype.drawTo = function(ctx) {
 	ctx.restore();
 };
 
-Segment.prototype.update = function() {
-	if(this.active) this.b.plusEquals(this.dir);
+Segment.prototype.update = function(dt) {
+	if(this.active) this.b.plusEquals(this.dir.times(dt *100));
 }
