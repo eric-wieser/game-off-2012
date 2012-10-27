@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Game-off 2012</title>
+		<link rel="stylesheet" href="/css/style.css" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis:300,600|Ubuntu" />
+		<script src="/js/two/vector.js"></script>
+		<script src="/js/two/matrix.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	</head>
+	<body>
+		<div id="wrapper"><canvas id="canvas">If you can see this, your browser sucks</canvas></div>
+		<script>
+
+		window.requestAnimationFrame =
+			window.requestAnimationFrame       ||
+			window.mozRequestAnimationFrame    ||
+			window.webkitRequestAnimationFrame ||
+			window.msRequestAnimationFrame     ||
+			window.oRequestAnimationFrame      ||
+			function(callback) {
+				window.setTimeout(function() {callback(Date.now())}, 1000 / 60.0);
+			};
+
+
+		var canvas = $('#canvas').get(0);
+
+		var ctx = canvas.getContext('2d');
+
+		$(window).resize(function(){
+			canvas.width  = $(canvas).width();
+			canvas.height = $(canvas).height();
+		}).resize();
+
+		var v = new Vector(30, 40);
+		function draw() {
+			ctx.save();
+			ctx.fillStyle = 'red';
+			ctx.beginPath();
+			ctx.arc(v.x, v.y, 10, 0, Math.PI * 2, false);
+			ctx.fill();
+			ctx.restore();
+			v.x++;
+			requestAnimationFrame(draw);
+		}
+		draw();
+		</script>
+	</body>
+</html>
