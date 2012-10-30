@@ -4,6 +4,7 @@
 		<title>Game-off 2012</title>
 		<link rel="stylesheet" href="/css/style.css" />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis:300,600|Ubuntu" />
+		<script src="/js/utils.js"></script>
 		<script src="/js/two/vector.js"></script>
 		<script src="/js/direction.js"></script>
 		<script src="/js/color.js"></script>
@@ -13,18 +14,6 @@
 	<body>
 		<div id="wrapper"><canvas id="canvas">If you can see this, your browser sucks</canvas></div>
 		<script>
-
-		window.requestAnimationFrame =
-			window.requestAnimationFrame       ||
-			window.mozRequestAnimationFrame    ||
-			window.webkitRequestAnimationFrame ||
-			window.msRequestAnimationFrame     ||
-			window.oRequestAnimationFrame      ||
-			function(callback) {
-				window.setTimeout(function() {callback(Date.now())}, 1000 / 60.0);
-			};
-
-
 		var canvas = $('#canvas').get(0);
 
 		var ctx = canvas.getContext('2d');
@@ -33,12 +22,6 @@
 			canvas.width  = $(canvas).width();
 			canvas.height = $(canvas).height();
 		}).resize();
-
-		function using(ctx, f) {
-			ctx.save();
-			f(ctx);
-			ctx.restore();
-		};
 
 		var segments,activeSegmentCount;
 		function start() {
@@ -49,12 +32,6 @@
 					new Vector(canvas.width/2, canvas.height),
 					Math.random(),
 					Direction.n
-				),
-				new Segment(
-					new Vector(canvas.width/2, 0),
-					new Vector(canvas.width/2, 0),
-					Math.random(),
-					Direction.s
 				)
 			];
 			activeSegmentCount = 1;
@@ -78,18 +55,20 @@
 					if(s.active) {
 						var r = Math.random()
 						s.update(dt);
-						s.drawTo(ctx);
 						if(s.length() > 50) {
 							s.b = s.a.plus(s.dir.times(50))
 							if(r < (activeSegmentCount - 1) / 20) {
 								s.active = false;
 								activeSegmentCount--;
-								using(ctx, function() {
+								ctx.scoped(function() {
 									ctx.beginPath();
 									ctx.globalCompositeOperation = 'source-over';
+									ctx.strokeStyle = "white";
 									ctx.fillStyle = "black";
-									ctx.arc(s.b.x, s.b.y, 5, 0, Math.PI * 2, false);
+									ctx.lineWidth = 2;
+									ctx.arc(s.b.x, s.b.y, 4, 0, Math.PI * 2, false);
 									ctx.fill();
+									ctx.stroke();
 								});
 							}
 							else {
@@ -100,7 +79,7 @@
 								else forked = s.forkSymmetric();
 								newSegments.push(forked[0]);
 								newSegments.push(forked[1]);
-								using(ctx, function() {
+								ctx.scoped(function() {
 									ctx.beginPath();
 									ctx.globalCompositeOperation = 'source-over';
 									ctx.fillStyle = "white";
@@ -110,6 +89,7 @@
 								activeSegmentCount++;
 							}
 						}
+						s.drawTo(ctx);
 					}
 				});
 				newSegments.forEach(function(s) {

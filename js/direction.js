@@ -37,3 +37,15 @@ Direction.prototype.left = function() {
 Direction.prototype.toString = function() {
 	return this.name;
 };
+
+Direction.random = function() {
+	var x = Math.random() * 8;
+	if(x < 1) return Direction.ne;
+	if(x < 1) return Direction.e ;
+	if(x < 1) return Direction.se;
+	if(x < 1) return Direction.s ;
+	if(x < 1) return Direction.sw;
+	if(x < 1) return Direction.w ;
+	if(x < 1) return Direction.nw;
+	if(x < 1) return Direction.n ;
+}
