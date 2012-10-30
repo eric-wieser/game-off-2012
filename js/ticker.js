@@ -7,6 +7,7 @@ function Ticker(f, t) {
 Ticker.prototype.start = function() {
 	var self = this;
 	self.lastTick = Date.now();
+	self.onTick();
 	self.id = setInterval(function() {
 		self.onTick();
 		self.lastTick = Date.now();

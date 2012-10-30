@@ -13,39 +13,25 @@
 		<script src="/js/color.js"></script>
 		<script src="/js/commit.js"></script>
 		<script src="/js/diff.js"></script>
+		<script src="/js/randomplayer.js"></script>
 		<script src="/js/world.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	</head>
 	<body>
 		<div id="wrapper"><canvas id="canvas">If you can see this, your browser sucks</canvas></div>
 		<script>
-		var pA = new Author("A", "red");
-		var pB = new Author("B", "blue");
-		var pC = new Author("C", "green");
-
-		var canvas = $('#canvas').get(0);
 		var world = new World(20, 15);
-		var a = world.get(0, 0),
-		    b = world.get(1, 0);
 
-		var z = world.get(0, 2),
-		    y = world.get(1, 2),
-		    x = world.get(1, 1),
-		    w = world.get(2, 2);
+		var colors = "red orange yellow green blue violet".split(' ');
 
-		var m = world.get(2, 1),
-			n = world.get(3, 1);
-
-		a.author = pA;
-		z.author = pB;
-		a.updateUsers();
-		z.updateUsers();
-
-		var lastCommit = world.get(5, 5);
-		lastCommit.author = pC;
-		lastCommit.updateUsers();
-
-		var lastDirection = Direction.n;
+		var players = colors.map(function(c) {
+			var x = Math.round(Math.random() * world.width);
+			var y = Math.round(Math.random() * world.height);
+			return new RandomPlayer(
+				world.get(x, y),
+				new Author("Player "+c, c)
+			)
+		});
 
 		function sequencer(a) {
 			var i = 0;
@@ -53,40 +39,28 @@
 				if(a.length > i) a[i++]();
 			}
 		}
-		var testcase = sequencer([
-			function() {
-				world.diffs.push(new Diff(world, a, b, a.author));
-				world.diffs.push(new Diff(world, z, y, z.author));
-			},
-			function() {
-				world.diffs.push(new Diff(world, b, m, b.author));
-				world.diffs.push(new Diff(world, y, x, y.author));
-			},
-			function() {
-				world.diffs.push(new Diff(world, x, w, x.author));
-				world.diffs.push(new Diff(world, m, n, m.author));
-				world.diffs.push(new Diff(world, y, m, y.author));
-			}
-		]);
+		// var testcase = sequencer([
+		// 	function() {
+		// 		world.diffs.push(new Diff(world, a, b, a.author));
+		// 		world.diffs.push(new Diff(world, z, y, z.author));
+		// 	},
+		// 	function() {
+		// 		world.diffs.push(new Diff(world, b, m, b.author));
+		// 		world.diffs.push(new Diff(world, y, x, y.author));
+		// 	},
+		// 	function() {
+		// 		world.diffs.push(new Diff(world, x, w, x.author));
+		// 		world.diffs.push(new Diff(world, m, n, m.author));
+		// 		world.diffs.push(new Diff(world, y, m, y.author));
+		// 	}
+		// ]);
 
 		var ticker = new Ticker(function() {
 			world.tick();
-			testcase();
 
-			var r = Math.random() * 3;
-			var nextDirection = lastDirection;
-			if(r < 1) nextDirection = lastDirection.left();
-			else if(r < 2) nextDirection = lastDirection.right();
-
-			var nextCommit = world.get(
-				lastCommit.x + nextDirection.x,
-				lastCommit.y + nextDirection.y
-			)
-			if(nextCommit) {
-				world.diffs.push(new Diff(world, lastCommit, nextCommit, pC))
-				lastDirection = nextDirection;
-				lastCommit = nextCommit;
-			}
+			players.forEach(function(player) {
+				player.update();
+			});
 		}, 1);
 
 

@@ -7,14 +7,16 @@ IdSet.prototype.add = function(x) {
 	if(!(x.id in this.lookup)) {
 		this.lookup[x.id] = x;
 		this.size++;
+		return true;
 	}
-	return this;
+	return false;
 };
 IdSet.prototype.addAll = function(s) {
+	var addedAny = false;
 	s.forEach(function(x) {
-		this.add(x);
+		addedAny = this.add(x) || addedAny;
 	}, this);
-	return this;
+	return addedAny;
 };
 IdSet.prototype.contains = function(x) {
 	return x.id in this.lookup;
