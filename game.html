@@ -14,6 +14,7 @@
 		<script src="/js/color.js"></script>
 		<script src="/js/commit.js"></script>
 		<script src="/js/diff.js"></script>
+		<script src="/js/humanplayer.js"></script>
 		<script src="/js/randomplayer.js"></script>
 		<script src="/js/world.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -33,6 +34,13 @@
 				new Author("Player "+c, Color[c]())
 			)
 		});
+		players.push(
+			new HumanPlayer(
+				world.get(5, 5),
+				new Author("Human", Color.red()),
+				Controls.wasd
+			)
+		)
 
 		function sequencer(a) {
 			var i = 0;
