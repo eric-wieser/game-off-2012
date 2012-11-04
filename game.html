@@ -23,14 +23,14 @@
 		<script>
 		var world = new World(20, 15);
 
-		var colors = "red orange yellow green blue violet".split(' ');
+		var colors = "green cyan blue".split(' ');
 
 		var players = colors.map(function(c) {
 			var x = Math.round(Math.random() * world.width);
 			var y = Math.round(Math.random() * world.height);
 			return new RandomPlayer(
 				world.get(x, y),
-				new Author("Player "+c, c)
+				new Author("Player "+c, Color[c]())
 			)
 		});
 
@@ -62,7 +62,7 @@
 			players.forEach(function(player) {
 				player.update();
 			});
-		}, 1);
+		}, 0.5);
 
 
 		var ctx = canvas.getContext('2d');

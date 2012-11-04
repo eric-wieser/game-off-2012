@@ -12,7 +12,7 @@ function World(width, height) {
 	this.diffs = [];
 }
 
-World.prototype.SPACING = 50;
+World.prototype.SPACING = 40;
 World.prototype.DIFF_WIDTH = 8;
 
 World.prototype.drawDiff = function(ctx, from, to) {
@@ -30,7 +30,6 @@ World.prototype.drawTo = function(ctx, progress) {
 	ctx.scoped(function() {
 		ctx.lineWidth = this.DIFF_WIDTH;
 		ctx.lineCap = 'round';
-		ctx.strokeStyle = 'red';
 		self.diffs.forEach(function(diff) {
 			diff.drawTo(ctx, progress);
 		});
@@ -42,9 +41,7 @@ World.prototype.drawTo = function(ctx, progress) {
 		ctx.globalCompositeOperation = "destination-out";
 		ctx.fillStyle = "rgba(0, 0, 0, 1)";
 		self.commits.forEach(function(commit) {
-			ctx.beginPath();
-			ctx.circle(commit.x * self.SPACING, commit.y * self.SPACING, 6);
-			ctx.fill();
+			commit.clearTo(ctx);
 		});
 	});
 	ctx.scoped(function() {

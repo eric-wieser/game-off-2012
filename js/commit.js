@@ -29,12 +29,21 @@ Commit.prototype.updateUsers = function() {
 	}, this);
 }
 Commit.prototype.drawTo = function(ctx) {
-	if(this.parents.length > 0 || this.isRoot) {
-		ctx.fillStyle = "white";
+	if(this.author) {
+		if(this.parents.length > 1)
+			ctx.fillStyle = "white"
+		else
+			ctx.fillStyle = ""+this.author.color.lerped(Color.white(), 0.5);
+
 		ctx.beginPath();
 		ctx.circle(this.x * this.world.SPACING, this.y * this.world.SPACING, 4);
 		ctx.fill();
-	} /*else {
-		ctx.fillStyle = "gray";
-	}*/
+	}
+}
+Commit.prototype.clearTo = function(ctx) {
+	if(this.author) {
+		ctx.beginPath();
+		ctx.circle(this.x * this.world.SPACING, this.y * this.world.SPACING, 6);
+		ctx.fill();
+	}
 }
