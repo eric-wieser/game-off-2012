@@ -5,6 +5,7 @@
 		<link rel="stylesheet" href="/css/style.css" />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis:300,600|Ubuntu" />
 		<script src="/js/utils.js"></script>
+		<script src="/js/controls.js"></script>
 		<script src="/js/ticker.js"></script>
 		<script src="/js/two/vector.js"></script>
 		<script src="/js/author.js"></script>
@@ -70,6 +71,10 @@
 			canvas.width  = $(canvas).width();
 			canvas.height = $(canvas).height();
 		}).resize();
+
+		$(document)
+			.keyup(Controls.keyUpHandler)
+			.keydown(Controls.keyDownHandler);
 
 		ticker.start();
 		function draw(t) {
