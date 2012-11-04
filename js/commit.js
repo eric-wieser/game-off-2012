@@ -16,9 +16,16 @@ Commit.prototype.mergeInto = function(main) {
 	main.updateUsers();
 }
 Commit.prototype.updateUsers = function() {
-	this.users.add(this.author);
 	this.parents.forEach(function(parent) {
-		parent.users.addAll(this.users) && parent.updateUsers();
+		var added = false;
+		this.users.forEach(function(user) {
+			if(parent.users.add(user))
+				added = true;
+		});
+		if(parent.users.add(this.author))
+			added = true;
+		if(added)
+			parent.updateUsers();
 	}, this);
 }
 Commit.prototype.drawTo = function(ctx) {

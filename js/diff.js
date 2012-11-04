@@ -8,10 +8,14 @@ function Diff(world, from, to, author) {
 Diff.prototype.apply = function() {
 	if(this.to.author == null) {
 		this.to.author = this.author;
+		this.to.users.add(this.author);
+	} else {
+		this.onMerged();
 	}
 	this.to.parents.push(this.from);
 	this.to.updateUsers();
 };
+Diff.prototype.onMerged = function() {};
 Diff.prototype.drawTo = function(ctx, progress) {
 	var self = this;
 	var to = self.to;
