@@ -1,29 +1,32 @@
-function Controls(keymap) {
-	this.keymap = keymap;
-	this.nameFor = {}
-	for(var key in keymap) {
-		this[key] = false;
-		this.nameFor[keymap[key]] = key;
+Controls = Class.extend({
+	init: function(keymap) {
+		this.keymap = keymap;
+		this.nameFor = {}
+		for(var key in keymap) {
+			this[key] = false;
+			this.nameFor[keymap[key]] = key;
+		}
+		Controls.instances.push(this)
+	},
+	keyUp: function(k) {
+		var name = this.nameFor[k];
+		if(name) this[name] = false;
+	},
+	keyDown: function(k) {
+		var name = this.nameFor[k];
+		if(name) this[name] = true;
+	},
+	direction: function() {
+		var x = 0, y = 0;
+		if(this.up) y--;
+		if(this.down) y++;
+		if(this.left) x--;
+		if(this.right) x++;
+		return new Direction(x, y);
 	}
-	Controls.instances.push(this)
-}
+})
+
 Controls.instances = [];
-Controls.prototype.keyUp = function(k) {
-	var name = this.nameFor[k];
-	if(name) this[name] = false;
-};
-Controls.prototype.keyDown = function(k) {
-	var name = this.nameFor[k];
-	if(name) this[name] = true;
-};
-Controls.prototype.direction = function() {
-	var x = 0, y = 0;
-	if(this.up) y--;
-	if(this.down) y++;
-	if(this.left) x--;
-	if(this.right) x++;
-	return new Direction(x, y);
-};
 Controls.wasd = new Controls({
 	up:    87,
 	down:  83,
