@@ -1,9 +1,9 @@
 Branch = Class.extend({
-	init: function(startCommit, author) {
+	init: function(author, startCommit, direction) {
 		this.author = author;
 		this.world = startCommit.world;
 		this.at = startCommit;
-		this.dir = Direction.random();
+		this.dir = direction || Direction.random();
 
 		this.at.author = this.author;
 		this.at.isRoot = true;
@@ -29,6 +29,8 @@ Branch = Class.extend({
 			this.world.diffs.push(d)
 			this.dir = nextDir;
 			this.at = nextCommit;
+		} else {
+			this.merged = true;
 		}
 	}
 })

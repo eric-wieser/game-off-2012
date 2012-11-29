@@ -23,6 +23,9 @@ Controls = Class.extend({
 		if(this.left) x--;
 		if(this.right) x++;
 		return new Direction(x, y);
+	},
+	toString: function() {
+		return "Controls#"+Controls.instances.indexOf(this);
 	}
 })
 
@@ -31,7 +34,8 @@ Controls.wasd = new Controls({
 	up:    87,
 	down:  83,
 	left:  65,
-	right: 68
+	right: 68,
+	fork:  69
 });
 Controls.arrows = new Controls({
 	up:    38,
@@ -43,14 +47,24 @@ Controls.numpad = new Controls({
 	up:    104,
 	down:  101,
 	left:  100,
-	right: 102
+	right: 102,
+	fork:  105
 });
+Controls.ijkl = new Controls({
+	up:    73,
+	down:  75,
+	left:  74,
+	right: 76,
+	right: 79
+});
+
+/*
 Controls.hjkl = new Controls({
 	up:    74,
 	down:  75,
 	left:  72,
 	right: 76
-});
+});*/
 
 Controls.keyUpHandler = function(e) {
 	var key = e.which;

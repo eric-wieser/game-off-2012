@@ -17,61 +17,95 @@
 		<script src="/js/branch.js"></script>
 		<script src="/js/keyboardbranch.js"></script>
 		<script src="/js/randombranch.js"></script>
+		<script src="/js/keyboardplayer.js"></script>
+		<script src="/js/randomplayer.js"></script>
 		<script src="/js/world.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	</head>
 	<body>
 		<div id="wrapper"><canvas id="canvas">If you can see this, your browser sucks</canvas></div>
+		<div id="gameover" class="vertical-center" style="display: none">
+			<div>
+				<div class="box">
+					<h1>The game is over!</h1>
+					<a id="restart" href="#">Restart</a>
+				</div>
+			</div>
+		</div>
+		<div id="about" class="vertical-center">
+			<div>
+				<div class="box">
+					<h1>Github game-off 2012</h1>
+					<p>You're working on the coolest project ever. You want to grab as much of your competitors code as possible, without letting them get hold of yours.</p>
+					<p>The red line is your revision graph. Direct it with <kbd>wasd</kbd>. Collide with another revision graph, and you'll merge in, giving your evil competitors all your awesome code! Try to get them to give their code to you by cutting them off</p>
+					<p>In a fix? Push <kbd>e</kbd> to fork your repository to split your revision graph in two!<p>
+					<a id="play" href="#">Play</a>
+				</div>
+			</div>
+		</div>
+		<div id="scores"></div>
 		<script>
-		var world = new World(20, 15);
 
-		var colors = "green cyan blue".split(' ');
-
-		var players = colors.map(function(c) {
-			var x = Math.round(Math.random() * world.width);
-			var y = Math.round(Math.random() * world.height);
-			return new RandomBranch(
-				world.get(x, y),
-				new Author("Player "+c, Color[c]())
-			)
-		});
-		players.push(
-			new KeyboardBranch(
-				world.get(5, 5),
-				new Author("Human", Color.red()),
-				Controls.wasd
-			)
-		)
-
-		function sequencer(a) {
-			var i = 0;
-			return function f() {
-				if(a.length > i) a[i++]();
-			}
-		}
-		// var testcase = sequencer([
-		// 	function() {
-		// 		world.diffs.push(new Diff(world, a, b, a.author));
-		// 		world.diffs.push(new Diff(world, z, y, z.author));
-		// 	},
-		// 	function() {
-		// 		world.diffs.push(new Diff(world, b, m, b.author));
-		// 		world.diffs.push(new Diff(world, y, x, y.author));
-		// 	},
-		// 	function() {
-		// 		world.diffs.push(new Diff(world, x, w, x.author));
-		// 		world.diffs.push(new Diff(world, m, n, m.author));
-		// 		world.diffs.push(new Diff(world, y, m, y.author));
-		// 	}
-		// ]);
-
-		var ticker = new Ticker(function() {
-			world.tick();
-
-			players.forEach(function(player) {
-				player.update();
+		var world, players, ticker;
+		function newGame() {
+			$('#about').hide();
+			$('#gameover').hide();
+			world = new World(24, 15);
+			players = "green cyan blue".split(' ').map(function(c) {
+				var x = Math.round(Math.random() * world.width);
+				var y = Math.round(Math.random() * world.height);
+				return new RandomPlayer(
+					"CPU", Color[c](),
+					world.get(x, y)
+				)
 			});
-		}, 0.5);
+			players.push(
+				new KeyboardPlayer(
+					"You", Color.red(),
+					world.get(5, 5)
+				)
+			)
+			$('#scores').empty();
+			players.forEach(function(p) {
+				p.scoreBar = $('<div>').append(
+					$('<span>').addClass('name').text(p.name),
+					$('<span>').addClass('score').text('0').css({color: p.color})
+				)
+				$('#scores').append(p.scoreBar, " ")
+			})
+
+			ticker = new Ticker(function() {
+				world.tick();
+
+				players.forEach(function(player) {
+					player.update();
+				});
+
+				players.forEach(function(player) {
+					var written = 0;
+					var used = 0;
+					world.commits.forEach(function(c) {
+						if(c.author == player) written++;
+						if(c.users.contains(player)) used++;
+					});
+
+					// Score = 2*your commits + other's commits
+					var others = used - written;
+					player.scoreBar
+						.attr({title: written+" written, "+others+" merged"})
+						.find('.score')
+							.text(2*written + others);
+				});
+
+				if(players.every(function(p) { return p.branches.length == 0; })) {
+					ticker.stop();
+					$('#gameover').show();
+					$('#restart').one('click', newGame)
+				}
+			}, 0.5);
+			ticker.start();
+			return false;
+		}
 
 
 		var ctx = canvas.getContext('2d');
@@ -84,14 +118,14 @@
 		$(document)
 			.keyup(Controls.keyUpHandler)
 			.keydown(Controls.keyDownHandler);
-
-		ticker.start();
+		$('#play').click(newGame);
 		function draw(t) {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			world.drawTo(ctx, ticker.progress());
+			if(world && ticker) world.drawTo(ctx, ticker.progress());
 			requestAnimationFrame(draw);
 		}
 		draw();
+
 		</script>
 	</body>
 </html>
