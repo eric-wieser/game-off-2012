@@ -48,11 +48,11 @@ World.prototype.drawTo = function(ctx, progress) {
 		ctx.scoped(function() {
 			ctx.lineWidth = this.DIFF_WIDTH;
 			ctx.lineCap = 'round';
-			self.diffs.forEach(function(diff) {
-				diff.drawTo(ctx, progress);
-			});
 			self.appliedDiffs.forEach(function(diff) {
 				diff.drawTo(ctx, 1);
+			});
+			self.diffs.forEach(function(diff) {
+				diff.drawTo(ctx, progress);
 			});
 		});
 		ctx.scoped(function() {
