@@ -13,5 +13,8 @@ KeyboardBranch = Branch.extend({
 		else if(this.dir.isRightOf(askedDir))
 			nextDir = this.dir.left();
 		return nextDir;
+	},
+	drawTo: function(ctx) {
+		ctx.fillText("Wat", this.at.x, this.at.y);
 	}
 });

@@ -36,9 +36,41 @@
 			<div>
 				<div class="box">
 					<h1>Github game-off 2012</h1>
-					<p>You're working on the coolest project ever. You want to grab as much of your competitors code as possible, without letting them get hold of yours.</p>
-					<p>The red line is your revision graph. Direct it with <kbd>wasd</kbd>. Collide with another revision graph, and you'll merge in, giving your evil competitors all your awesome code! Try to get them to give their code to you by cutting them off</p>
-					<p>In a fix? Push <kbd>e</kbd> to fork your repository to split your revision graph in two!<p>
+					<p>You're working on the coolest project ever. Unfortunately, so are your friends! With the fierce competition, you want to merge in as much of their code as possible, without letting them get hold of yours.</p>
+					<p>The red line is your revision graph. Collide with another revision graph, and you'll merge in, giving your friends all your awesome code! Try to force them to give their code to you by cutting them off.</p>
+					<p>In a fix? Branch your repository to split your revision graph in two!<p>
+					<h2>Controls</h2>
+					<p>Your revision graph is directed with a set of arrow keys. When you have multiple branches, you'll need multiple sets <i>at the same time</i>! The four available sets of controls are show below</p>
+					<div class="control-sets">
+						<div style="width: 55px">
+							<kbd class="up"    style="left: 20px; top:  5px">w</kbd>
+							<kbd class="left"  style="left:  5px; top: 25px">a</kbd>
+							<kbd class="down"  style="left: 25px; top: 25px">s</kbd>
+							<kbd class="right" style="left: 45px; top: 25px">d</kbd>
+							<kbd class="fork"  style="left: 40px; top:  5px">e</kbd>
+						</div><div style="width: 55px">
+							<kbd class="up"    style="left: 20px; top:  5px">i</kbd>
+							<kbd class="left"  style="left:  5px; top: 25px">j</kbd>
+							<kbd class="down"  style="left: 25px; top: 25px">k</kbd>
+							<kbd class="right" style="left: 45px; top: 25px">l</kbd>
+							<kbd class="fork"  style="left: 40px; top:  5px">o</kbd>
+						</div><div style="width: 55px">
+							<kbd class="up"    style="left: 25px; top:  5px">&uarr;</kbd>
+							<kbd class="left"  style="left:  5px; top: 25px">&larr;</kbd>
+							<kbd class="down"  style="left: 25px; top: 25px">&darr;</kbd>
+							<kbd class="right" style="left: 45px; top: 25px">&rarr;</kbd>
+						</div><div style="width: 55px">
+							<kbd class="up"    style="left: 25px; top:  5px">8</kbd>
+							<kbd class="left"  style="left:  5px; top: 25px">4</kbd>
+							<kbd class="down"  style="left: 25px; top: 25px">5</kbd>
+							<kbd class="right" style="left: 45px; top: 25px">6</kbd>
+							<kbd class="fork"  style="left:  5px; top:  5px">7</kbd>
+						</div>
+					</div>
+					<p>For each set of controls, the directional keys control the direction, and the fork key, in orange, causes the branch to split in two. Your initial branch will start off with <kbd>wasde</kbd> as its controls.</p>
+
+					<p>The HEAD of each branch will be labeled with its controls, so you can remind yourself which set of keys controls which branch.</p>
+
 					<a id="play" href="#">Play</a>
 				</div>
 			</div>
@@ -89,12 +121,16 @@
 						if(c.users.contains(player)) used++;
 					});
 
+					var stale = player.branches.length == 0;
+
 					// Score = 2*your commits + other's commits
 					var others = used - written;
 					player.scoreBar
 						.attr({title: written+" written, "+others+" merged"})
 						.find('.score')
 							.text(2*written + others);
+
+					if(stale) player.scoreBar.addClass('stale')
 				});
 
 				if(players.every(function(p) { return p.branches.length == 0; })) {
@@ -102,7 +138,7 @@
 					$('#gameover').show();
 					$('#restart').one('click', newGame)
 				}
-			}, 0.5);
+			}, 1);
 			ticker.start();
 			return false;
 		}

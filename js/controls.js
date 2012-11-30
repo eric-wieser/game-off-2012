@@ -1,5 +1,6 @@
 Controls = Class.extend({
-	init: function(keymap) {
+	init: function(name, keymap) {
+		this.name = name;
 		this.keymap = keymap;
 		this.nameFor = {}
 		for(var key in keymap) {
@@ -30,32 +31,32 @@ Controls = Class.extend({
 })
 
 Controls.instances = [];
-Controls.wasd = new Controls({
+Controls.wasd = new Controls("wasd", {
 	up:    87,
 	down:  83,
 	left:  65,
 	right: 68,
 	fork:  69
 });
-Controls.arrows = new Controls({
-	up:    38,
-	down:  40,
-	left:  37,
-	right: 39
-});
-Controls.numpad = new Controls({
+Controls.numpad = new Controls("numpad", {
 	up:    104,
 	down:  101,
 	left:  100,
 	right: 102,
-	fork:  105
+	fork:  103
 });
-Controls.ijkl = new Controls({
+Controls.ijkl = new Controls("ijkl", {
 	up:    73,
 	down:  75,
 	left:  74,
 	right: 76,
-	right: 79
+	fork: 79
+});
+Controls.arrows = new Controls("arrows", {
+	up:    38,
+	down:  40,
+	left:  37,
+	right: 39
 });
 
 /*

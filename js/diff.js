@@ -1,14 +1,14 @@
-function Diff(world, from, to, author) {
+function Diff(world, from, to, branch) {
 	this.world = world;
 	this.from = from;
 	this.to = to;
-	this.author = author;
+	this.branch = branch;
 }
 
 Diff.prototype.apply = function() {
 	if(this.to.author == null) {
-		this.to.author = this.author;
-		this.to.users.add(this.author);
+		this.to.author = this.branch.author;
+		this.to.users.add(this.branch.author);
 	} else {
 		this.onMerged();
 	}
@@ -52,11 +52,17 @@ Diff.prototype.drawTo = function(ctx, progress) {
 			ctx.stroke();
 		});
 	} else {
-		ctx.strokeStyle = ""+this.author.color;
+		ctx.strokeStyle = ""+this.branch.author.color;
 		ctx.lineWidth = self.world.DIFF_WIDTH;
 		ctx.beginPath();
 		ctx.moveTo(from.x    * self.world.SPACING, from.y    * self.world.SPACING);
 		ctx.lineTo(toPoint.x * self.world.SPACING, toPoint.y * self.world.SPACING);
 		ctx.stroke();
+
+		if(self.branch instanceof KeyboardBranch) {
+			ctx.fillStyle = "white";
+			ctx.fillText(self.branch.controls.name, toPoint.x * self.world.SPACING, toPoint.y * self.world.SPACING)
+		}
 	}
+
 }

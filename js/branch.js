@@ -24,7 +24,7 @@ Branch = Class.extend({
 			this.at.y + nextDir.y
 		)
 		if(nextCommit) {
-			var d = new Diff(world, this.at, nextCommit, this.author);
+			var d = new Diff(world, this.at, nextCommit, this);
 			d.onMerged = function() { self.merged = true; }
 			this.world.diffs.push(d)
 			this.dir = nextDir;
@@ -32,5 +32,6 @@ Branch = Class.extend({
 		} else {
 			this.merged = true;
 		}
-	}
+	},
+	drawTo: function(ctx) {}
 })
