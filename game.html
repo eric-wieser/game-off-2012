@@ -28,7 +28,7 @@
 			<div>
 				<div class="box">
 					<h1>The game is over!</h1>
-					<a id="restart" href="#">Restart</a>
+					<a id="done" href="#">Return to menu</a>
 				</div>
 			</div>
 		</div>
@@ -37,7 +37,7 @@
 				<div class="box">
 					<h1>Github game-off 2012</h1>
 					<p>You're working on the coolest project ever. Unfortunately, so are your friends! With the fierce competition, you want to merge in as much of their code as possible, without letting them get hold of yours.</p>
-					<p>The red line is your revision graph. Collide with another revision graph, and you'll merge in, giving your friends all your awesome code! Try to force them to give their code to you by cutting them off.</p>
+					<p>The red line is your revision graph. Collide with another revision graph, and you'll merge in, giving your friends all your awesome code! Try to force them to give their code to you by cutting them off. Points are awarded for each commit integrated into the graph.</p>
 					<p>In a fix? Branch your repository to split your revision graph in two!<p>
 					<h2>Controls</h2>
 					<p>Your revision graph is directed with a set of arrow keys. When you have multiple branches, you'll need multiple sets <i>at the same time</i>! The four available sets of controls are show below</p>
@@ -71,7 +71,8 @@
 
 					<p>The HEAD of each branch will be labeled with its controls, so you can remind yourself which set of keys controls which branch.</p>
 
-					<a id="play" href="#">Play</a>
+					<a class="button" id="play-easy" href="#">Easy</a>
+					<a class="button" id="play-hard" href="#">Hard</a>
 				</div>
 			</div>
 		</div>
@@ -79,7 +80,7 @@
 		<script>
 
 		var world, players, ticker;
-		function newGame() {
+		function newGame(t) {
 			$('#about').hide();
 			$('#gameover').hide();
 			world = new World(24, 15);
@@ -136,9 +137,12 @@
 				if(players.every(function(p) { return p.branches.length == 0; })) {
 					ticker.stop();
 					$('#gameover').show();
-					$('#restart').one('click', newGame)
+					$('#done').one('click', function() {
+						$('#gameover').hide();
+						$('#about').show();
+					})
 				}
-			}, 1);
+			}, t);
 			ticker.start();
 			return false;
 		}
@@ -154,7 +158,8 @@
 		$(document)
 			.keyup(Controls.keyUpHandler)
 			.keydown(Controls.keyDownHandler);
-		$('#play').click(newGame);
+		$('#play-easy').click(function() {newGame(1)});
+		$('#play-hard').click(function() {newGame(0.5)});
 		function draw(t) {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			if(world && ticker) world.drawTo(ctx, ticker.progress());

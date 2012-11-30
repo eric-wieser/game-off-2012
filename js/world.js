@@ -26,27 +26,46 @@ World.prototype.tick = function() {
 	this.diffs = [];
 }
 World.prototype.drawTo = function(ctx, progress) {
+	var intWidth = this.SPACING * this.width;
+	var intHeight = this.SPACING * this.height;
+
+	var dx = Math.floor((ctx.canvas.width - intWidth) / 2);
+	var dy = Math.floor((ctx.canvas.height - intHeight) / 2);
+
 	var self = this;
 	ctx.scoped(function() {
-		ctx.lineWidth = this.DIFF_WIDTH;
-		ctx.lineCap = 'round';
-		self.diffs.forEach(function(diff) {
-			diff.drawTo(ctx, progress);
+		ctx.fillStyle = "#404040";
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.translate(dx, dy);
+		ctx.scoped(function() {
+			ctx.globalCompositeOperation = "destination-out";
+			ctx.fillStyle = "rgba(0, 0, 0, 1)";
+			ctx.fillRect(
+				-self.DIFF_WIDTH, -self.DIFF_WIDTH,
+				intWidth+2*self.DIFF_WIDTH, intHeight+2*self.DIFF_WIDTH
+			);
 		});
-		self.appliedDiffs.forEach(function(diff) {
-			diff.drawTo(ctx, 1);
+		ctx.scoped(function() {
+			ctx.lineWidth = this.DIFF_WIDTH;
+			ctx.lineCap = 'round';
+			self.diffs.forEach(function(diff) {
+				diff.drawTo(ctx, progress);
+			});
+			self.appliedDiffs.forEach(function(diff) {
+				diff.drawTo(ctx, 1);
+			});
 		});
-	});
-	ctx.scoped(function() {
-		ctx.globalCompositeOperation = "destination-out";
-		ctx.fillStyle = "rgba(0, 0, 0, 1)";
-		self.commits.forEach(function(commit) {
-			commit.clearTo(ctx);
+		ctx.scoped(function() {
+			ctx.globalCompositeOperation = "destination-out";
+			ctx.fillStyle = "rgba(0, 0, 0, 1)";
+			self.commits.forEach(function(commit) {
+				commit.clearTo(ctx);
+			});
 		});
-	});
-	ctx.scoped(function() {
-		self.commits.forEach(function(commit) {
-			commit.drawTo(ctx);
+		ctx.scoped(function() {
+			self.commits.forEach(function(commit) {
+				commit.drawTo(ctx);
+			});
 		});
 	});
 }

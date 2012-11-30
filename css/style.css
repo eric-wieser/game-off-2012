@@ -21,7 +21,7 @@ p {
 p + p {
 	margin-top: 10px;
 }
-.about { position: relative; z-index: 10 }
+.about .box { position: relative; z-index: 10 }
 #wrapper {
 	position: absolute;
 	top: 0;
@@ -58,8 +58,8 @@ canvas {
 
 .box {
 	width: 500px;
-	padding: 50px;
-	background: rgba(255, 255, 255, 0.75);
+	padding: 25px 50px;
+	background: rgba(255, 255, 255, 0.9);
 }
 
 #scores {
@@ -132,3 +132,16 @@ canvas {
 .control-sets kbd.fork { background: #e0c080; border-color: #C08040;}
 
 #scores .stale .name { text-decoration: line-through; }
+
+a.button {
+	display: inline-block;
+	text-align: center;
+	text-decoration: none;
+	line-height: 25px;
+	height: 25px;
+	min-width: 50px;
+	margin-top: 10px;
+	margin-right: 10px;
+	background: #404040;
+	color: white;
+}
